@@ -1,5 +1,10 @@
 package com.example.sin_yunseob.test;
 
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.support.annotation.UiThread;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -22,9 +27,12 @@ public class MyThread extends Thread{
     String address = "https://api.github.com/users/JakeWharton/repos";
     String str, receiveMsg;
     ArrayList<UserInfo> userInfos = new ArrayList<UserInfo>();
+
+
     @Override
     public void run() {
         try {
+
             URL url = new URL(address);
             httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
@@ -40,15 +48,13 @@ public class MyThread extends Thread{
                 }
                 receiveMsg = buffer.toString();
                 Log.i("receiveMsg : ", receiveMsg);
+                reader.close();
 
                 //json parse
-
                 JSONArray jsonArray = new JSONArray(receiveMsg);
+
                 String login = jsonArray.getJSONObject(0).getJSONObject("owner").opt("login").toString();
                 String avatar_url = jsonArray.getJSONObject(0).getJSONObject("owner").opt("avatar_url").toString();
-
-
-
                 //Log.d(TAG, "rundddc: " + name);
 
                 Log.d(TAG, "hello");
@@ -60,7 +66,19 @@ public class MyThread extends Thread{
                     userInfos.add(new UserInfo(login,avatar_url,name,description,stargazers_count));
                 }
 
-                reader.close();
+                for(int i = 0 ; i < userInfos.size(); i ++){
+                    Log.d(TAG, "UserInfo: " + userInfos.get(i).getPost_name());
+                }
+
+                Looper.prepare();
+                Handler handler = new Handler(Looper.getMainLooper());
+                Message message = Message.obtain();
+                message.obj = userInfos;
+                handler.sendMessage(message);
+                Looper.loop();
+
+
+
             }else{
                 Log.d(TAG, "error" + " " + httpURLConnection.HTTP_INTERNAL_ERROR);
             }
@@ -76,5 +94,7 @@ public class MyThread extends Thread{
         }
 
     }
+
+
 
 }

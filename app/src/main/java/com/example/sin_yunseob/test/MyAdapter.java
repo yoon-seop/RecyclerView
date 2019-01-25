@@ -12,6 +12,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
@@ -40,11 +42,20 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        for(int j = 0 ; j < data.size(); j++){
-            ((ViewHolder)viewHolder).post_name.setText(data.get(0).getPost_name());
-            ((ViewHolder)viewHolder).description.setText(data.get(0).getPost_description());
-            ((ViewHolder)viewHolder).starCount.setText(data.get(0).getPost_stargazers_count());
+
+        CompareSeqDesc compareSeqDesc = new CompareSeqDesc();
+        Collections.sort(data, compareSeqDesc);
+
+        for(int k = 0 ; k < data.size() ; k ++){
+            Log.d("RRRRRR", "sequence: " + data.get(i).getPost_stargazers_count() + "\n");
         }
+
+        for(int j = 0; j < data.size() ; j++){
+            viewHolder.post_name.setText(data.get(i).getPost_name());
+            viewHolder.post_description.setText(data.get(i).getPost_description());
+            viewHolder.starCount.setText(data.get(i).getPost_stargazers_count());
+        }
+
     }
 
 
@@ -56,15 +67,14 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         TextView post_name;
-        TextView description;
+        TextView post_description;
         TextView starCount;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
             post_name = itemView.findViewById(R.id.textView_name);
-            description = itemView.findViewById(R.id.textView_post_description);
-            post_name = itemView.findViewById(R.id.textView_star);
+            post_description = itemView.findViewById(R.id.textView_post_description);
+            starCount = itemView.findViewById(R.id.textView_star);
 
             itemView.setOnClickListener(this);
 
@@ -76,4 +86,16 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         }
     }
 
+    class CompareSeqDesc implements Comparator<UserInfo> {
+
+        @Override
+        public int compare(UserInfo o1, UserInfo o2) {
+            return Integer.parseInt(o1.getPost_stargazers_count()) > Integer.parseInt(o2.getPost_stargazers_count()) ? -1 :
+                    Integer.parseInt(o1.getPost_stargazers_count()) < Integer.parseInt(o2.getPost_stargazers_count()) ? 1:0;
+        }
+    }
+
+
 }
+
+
