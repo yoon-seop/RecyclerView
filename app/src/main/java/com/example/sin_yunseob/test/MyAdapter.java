@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,10 +15,10 @@ import java.util.ArrayList;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
-    ArrayList<String> data;
+    ArrayList<UserInfo> data;
     Context context;
 
-    public MyAdapter(ArrayList<String> data, Context context) {
+    public MyAdapter(ArrayList<UserInfo> data, Context context) {
         this.data = data;
         this.context = context;
     }
@@ -39,7 +40,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        ((ViewHolder)viewHolder).textView.setText(data.get(i));
+        for(int j = 0 ; j < data.size(); j++){
+            ((ViewHolder)viewHolder).post_name.setText(data.get(0).getPost_name());
+            ((ViewHolder)viewHolder).description.setText(data.get(0).getPost_description());
+            ((ViewHolder)viewHolder).starCount.setText(data.get(0).getPost_stargazers_count());
+        }
     }
 
 
@@ -50,17 +55,24 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        TextView textView;
+        TextView post_name;
+        TextView description;
+        TextView starCount;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            textView = itemView.findViewById(R.id.textView);
+
+            post_name = itemView.findViewById(R.id.textView_name);
+            description = itemView.findViewById(R.id.textView_post_description);
+            post_name = itemView.findViewById(R.id.textView_star);
+
             itemView.setOnClickListener(this);
+
         }
 
         @Override
         public void onClick(View view) {
-            Toast.makeText(context, textView.getText() +"hello", Toast.LENGTH_SHORT).show();
+
         }
     }
 
